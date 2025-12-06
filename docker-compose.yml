@@ -1,0 +1,20 @@
+services:
+  dev-db:
+    image: postgres:16
+    container_name: nest_db
+    ports:
+      - '5434:5432'
+    environment:
+      POSTGRES_USER: nest_user
+      POSTGRES_PASSWORD: nest_password
+      POSTGRES_DB: nest_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - nest_project
+
+networks:
+  nest_project:
+
+volumes:
+  pgdata:
