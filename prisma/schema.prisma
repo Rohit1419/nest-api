@@ -14,22 +14,30 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
+model Users {
   id        Int      @id @default(autoincrement())
   createdAT DateTime @default(now())
   updatedAT DateTime @updatedAt
   email     String   @unique
   hash      String
 
-  fristName String
+  firstName String
   lastName  String
+  bookmarks Bookmarks[]
+
+  @@map("users")
 }
 
-model Bookmark {
+model Bookmarks {
   id        Int      @id @default(autoincrement())
   createdAT DateTime @default(now())
 
   title       String
   description String
   url         String
+
+  userId Int
+  user   Users @relation(fields: [userId], references: [id])
+
+  @@map("bookmarks")
 }
