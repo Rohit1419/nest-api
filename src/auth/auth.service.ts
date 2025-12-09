@@ -50,6 +50,10 @@ export class AuthService {
     }
   }
 
+  // sign in logic here
+
+  async signIn() {}
+
   // sign a token generater for the user
 
   async signToken(
