@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma, Users } from '../../generated/prisma/client';
 import * as argon from 'argon2';
 import { AuthDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
-import { access } from 'fs';
-import { sign } from 'crypto';
 
 @Injectable({})
 export class AuthService {
+  // looger
+  private logger = new Logger('AuthService');
   constructor(
     private prisma: PrismaService,
     private jwt: JwtService,
@@ -41,7 +41,11 @@ export class AuthService {
         ...access_token,
       };
     } catch (error) {
-      console.log('error ', error);
+      if (error.code === 'P2002') {
+        this.logger.error(error.message);
+        throw new ForbiddenException('Email already exists');
+      }
+      console.log(error);
       throw error;
     }
   }
