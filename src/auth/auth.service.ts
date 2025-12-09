@@ -34,7 +34,12 @@ export class AuthService {
         },
       });
 
-      return this.signToken(user.id, user.email);
+      const access_token = await this.signToken(user.id, user.email);
+
+      return {
+        message: 'User created successfully',
+        ...access_token,
+      };
     } catch (error) {
       console.log('error ', error);
       throw error;
@@ -43,16 +48,17 @@ export class AuthService {
 
   // sign a token generater for the user
 
-  async signToken(userID: number, email: string): Promise<string> {
+  async signToken(
+    userID: number,
+    email: string,
+  ): Promise<{ access_token: string }> {
     const payload = { sub: userID, email };
 
-    const accessToken: string = await this.jwt.signAsync(payload, {
+    const access_token: string = await this.jwt.signAsync(payload, {
       expiresIn: '15m',
       secret: process.env.JWT_SECRET,
     });
 
-    return {
-      access_token: accessToken,
-    };
+    return { access_token };
   }
 }

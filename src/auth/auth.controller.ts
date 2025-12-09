@@ -11,9 +11,4 @@ export class AuthController {
     console.log('DTO ', dto);
     return this.authService.signUp(dto);
   }
-
-  @Get('signin')
-  async signIn() {
-    return await this.authService.signIn();
-  }
 }
