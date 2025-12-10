@@ -7,6 +7,6 @@ import { AuthGuard } from '@nestjs/passport';
 export class UserController {
   @Get('profile')
   getProfile() {
-    return { message: 'This is the user profile' };
+    return { message: `You're logged in:` };
   }
 }
