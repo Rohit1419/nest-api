@@ -2,8 +2,9 @@ import { Injectable, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma, Users } from '../../generated/prisma/client';
 import * as argon from 'argon2';
-import { AuthDto } from './dto';
+import { SignInDto, SignUpDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
+import { Sign } from 'crypto';
 
 @Injectable({})
 export class AuthService {
@@ -15,9 +16,9 @@ export class AuthService {
   ) {}
 
   // signup logic here
-  async signUp(dto: AuthDto) {
+  async signUp(dto: SignUpDto) {
     try {
-      const hash = await argon.hash(dto.hash);
+      const hash = await argon.hash(dto.password);
 
       const user = await this.prisma.users.create({
         data: {
@@ -52,7 +53,32 @@ export class AuthService {
 
   // sign in logic here
 
-  async signIn() {}
+  async signIn(dto: SignInDto) {
+    try {
+      const user = await this.prisma.users.findUnique({
+        where: { email: dto.email },
+      });
+
+      if (!user) {
+        throw new ForbiddenException('User not found');
+      }
+
+      const pwMatches = await argon.verify(user.hash, dto.password);
+
+      if (!pwMatches) {
+        throw new ForbiddenException('Incorrect password');
+      }
+      const access_token = await this.signToken(user.id, user.email);
+
+      return {
+        message: 'User signed in successfully',
+        ...access_token,
+      };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 
   // sign a token generater for the user
 

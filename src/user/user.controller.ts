@@ -1,12 +1,13 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { JwtGuard } from 'src/auth/gaurd';
 
-// the nestjs guard uses cjecks the authguard of paassport for the jwt validation.
-@UseGuards(AuthGuard('jwt'))
+// the nestjs guard uses checks the authguard of paassport for the jwt validation.
+
+@UseGuards(JwtGuard)
 @Controller('user')
 export class UserController {
   @Get('profile')
-  getProfile() {
-    return { message: `You're logged in:` };
+  getProfile(@Req() req) {
+    return req.user;
   }
 }
