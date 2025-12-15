@@ -1,5 +1,6 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/gaurd';
+import { GetUser } from 'src/auth/decorator';
 
 // the nestjs guard uses checks the authguard of paassport for the jwt validation.
 
@@ -7,7 +8,7 @@ import { JwtGuard } from 'src/auth/gaurd';
 @Controller('user')
 export class UserController {
   @Get('profile')
-  getProfile(@Req() req) {
-    return req.user;
+  getProfile(@GetUser() user) {
+    return user;
   }
 }
